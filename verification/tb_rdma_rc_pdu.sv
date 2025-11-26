@@ -90,17 +90,31 @@ task automatic send_pdu(
     input [QPN_WIDTH-1:0]    qpn,
     input [PSN_WIDTH-1:0]    psn
 );
+    // 定义采样变量，存储有效窗口的结果
+    reg opcode_err_sample;
+    reg qpn_mismatch_err_sample;
     begin
         pdu_data[OPCODE_OFFSET +: OPCODE_WIDTH] = opcode;
         pdu_data[QPN_OFFSET +: QPN_WIDTH]       = qpn;
         pdu_data[PSN_OFFSET +: PSN_WIDTH]       = psn;
+        @(posedge clk);
         pdu_valid = 1'b1;
         $display("[%0t ns] 发送PDU：Opcode=0x%02h, QPN=0x%04h, PSN=0x%06h, QP状态=%03b", 
                  $time, opcode, qpn, psn, qp_state);
-        #CLK_PERIOD;
+        // 2. 等待1个时钟周期，pdu_valid仅持续1个周期（匹配时序图的10~20ns）
+        @(posedge clk);
+        @(posedge clk);
         pdu_valid = 1'b0;
-        @(posedge clk);  // 等待时钟上升沿，让PDU模块更新错误标志
         #1;              // 避免竞争，延迟1ns
+        
+        // 3. 采样输出：此时opcode_err正处于20~30ns的有效窗口（核心！）
+        opcode_err_sample = opcode_err;
+        qpn_mismatch_err_sample = qpn_mismatch_err;
+        $display("[%0t ns] 采样结果：Opcode错误标志=%b, QPN不匹配错误标志=%b", 
+                 $time, opcode_err_sample, qpn_mismatch_err_sample);
+
+        // 4. 等待错误标志窗口结束，准备下一次PDU
+        @(posedge clk);
     end
 endtask
 
@@ -122,42 +136,42 @@ initial begin
     // 测试用例1：QP=RESET状态，发送数据帧（预期Opcode错误）
     qp_state = RESET;
     send_pdu(DATA_OPCODE, LOCAL_QPN, TEST_PSN);
-    $display("[%0t ns] 用例1：RESET状态+数据帧 → Opcode错误标志=%b", $time, opcode_err);
+    //$display("[%0t ns] 用例1：RESET状态+数据帧 → Opcode错误标志=%b", $time, opcode_err);
 
     // 测试用例2：QP=INIT状态，发送控制帧（预期Opcode错误）
     qp_state = INIT;
     send_pdu(CTRL_OPCODE, REMOTE_QPN, TEST_PSN + 1);
-    $display("[%0t ns] 用例2：INIT状态+控制帧 → Opcode错误标志=%b", $time, opcode_err);
+    //$display("[%0t ns] 用例2：INIT状态+控制帧 → Opcode错误标志=%b", $time, opcode_err);
 
     // 测试用例3：QP=RTR状态，发送控制帧（预期无Opcode错误）
     qp_state = RTR;
     send_pdu(CTRL_OPCODE, REMOTE_QPN, TEST_PSN + 2);
-    $display("[%0t ns] 用例3：RTR状态+控制帧 → Opcode错误标志=%b", $time, opcode_err);
+    //$display("[%0t ns] 用例3：RTR状态+控制帧 → Opcode错误标志=%b", $time, opcode_err);
 
     // 测试用例4：QP=RTR状态，发送数据帧（预期Opcode错误）
     qp_state = RTR;
     send_pdu(DATA_OPCODE, LOCAL_QPN, TEST_PSN + 3);
-    $display("[%0t ns] 用例4：RTR状态+数据帧 → Opcode错误标志=%b", $time, opcode_err);
+    //$display("[%0t ns] 用例4：RTR状态+数据帧 → Opcode错误标志=%b", $time, opcode_err);
 
     // 测试用例5：QP=RTS状态，发送数据帧（预期无Opcode错误）
     qp_state = RTS;
     send_pdu(DATA_OPCODE, LOCAL_QPN, TEST_PSN + 4);
-    $display("[%0t ns] 用例5：RTS状态+数据帧 → Opcode错误标志=%b", $time, opcode_err);
+    //$display("[%0t ns] 用例5：RTS状态+数据帧 → Opcode错误标志=%b", $time, opcode_err);
 
     // 测试用例6：QP=RTS状态，发送控制帧（预期Opcode错误）
     qp_state = RTS;
     send_pdu(CTRL_OPCODE, REMOTE_QPN, TEST_PSN + 5);
-    $display("[%0t ns] 用例6：RTS状态+控制帧 → Opcode错误标志=%b", $time, opcode_err);
+    //$display("[%0t ns] 用例6：RTS状态+控制帧 → Opcode错误标志=%b", $time, opcode_err);
 
     // 测试用例7：发送保留Opcode（任意状态均预期Opcode错误）
     qp_state = RTS;
     send_pdu(RESERVED_OPCODE, LOCAL_QPN, TEST_PSN + 6);
-    $display("[%0t ns] 用例7：RTS状态+保留Opcode → Opcode错误标志=%b", $time, opcode_err);
+    //$display("[%0t ns] 用例7：RTS状态+保留Opcode → Opcode错误标志=%b", $time, opcode_err);
 
     // 测试用例8：有效数据帧+无效QPN（预期QPN不匹配错误）
     qp_state = RTS;
     send_pdu(DATA_OPCODE, INVALID_QPN, TEST_PSN + 7);
-    $display("[%0t ns] 用例8：RTS状态+有效数据帧+无效QPN → QPN错误标志=%b", $time, qpn_mismatch_err);
+    //$display("[%0t ns] 用例8：RTS状态+有效数据帧+无效QPN → QPN错误标志=%b", $time, qpn_mismatch_err);
 
     // 结束仿真
     #50 $display("[%0t ns] PDU解析模块独立测试完成", $time);

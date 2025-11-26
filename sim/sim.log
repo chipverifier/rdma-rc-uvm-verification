@@ -1,0 +1,38 @@
+Command: /home/five/rdma-rc-uvm-verification/sim/./tb_rdma_rc_pdu -l sim.log
+Chronologic VCS simulator copyright 1991-2018
+Contains Synopsys proprietary information.
+Compiler version O-2018.09-SP2_Full64; Runtime version O-2018.09-SP2_Full64;  Nov 26 00:08 2025
+*Verdi* Loading libsscore_vcs201809.so
+FSDB Dumper for VCS, Release Verdi_O-2018.09-SP2, Linux x86_64/64bit, 02/21/2019
+(C) 1996 - 2019 by Synopsys, Inc.
+*Verdi* FSDB WARNING: The FSDB file already exists. Overwriting the FSDB file may crash the programs that are using this file.
+*Verdi* : Create FSDB file '../sim/wave/tb_rdma_rc_pdu.fsdb'
+*Verdi* : Begin traversing the scope (tb_rdma_rc_pdu), layer (0).
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the MDAs, layer (0).
+*Verdi* : Enable +mda and +packedmda dumping.
+*Verdi* : End of traversing the MDAs.
+[20000 ns] 复位释放
+[30000 ns] 发送PDU：Opcode=0x05, QPN=0x1234, PSN=0x000001, QP状态=000
+[46000 ns] 用例1：RESET状态+数据帧 → Opcode错误标志=0
+[46000 ns] 发送PDU：Opcode=0x25, QPN=0x5678, PSN=0x000002, QP状态=001
+[66000 ns] 用例2：INIT状态+控制帧 → Opcode错误标志=0
+[66000 ns] 发送PDU：Opcode=0x25, QPN=0x5678, PSN=0x000003, QP状态=010
+[86000 ns] 用例3：RTR状态+控制帧 → Opcode错误标志=0
+[86000 ns] 发送PDU：Opcode=0x05, QPN=0x1234, PSN=0x000004, QP状态=010
+[106000 ns] 用例4：RTR状态+数据帧 → Opcode错误标志=0
+[106000 ns] 发送PDU：Opcode=0x05, QPN=0x1234, PSN=0x000005, QP状态=011
+[126000 ns] 用例5：RTS状态+数据帧 → Opcode错误标志=0
+[126000 ns] 发送PDU：Opcode=0x25, QPN=0x5678, PSN=0x000006, QP状态=011
+[146000 ns] 用例6：RTS状态+控制帧 → Opcode错误标志=0
+[146000 ns] 发送PDU：Opcode=0x85, QPN=0x1234, PSN=0x000007, QP状态=011
+[166000 ns] 用例7：RTS状态+保留Opcode → Opcode错误标志=0
+[166000 ns] 发送PDU：Opcode=0x05, QPN=0x9999, PSN=0x000008, QP状态=011
+[186000 ns] 用例8：RTS状态+有效数据帧+无效QPN → QPN错误标志=0
+[236000 ns] PDU解析模块独立测试完成
+$finish called from file "../verification/tb_rdma_rc_pdu.sv", line 164.
+$finish at simulation time               236000
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 236000 ps
+CPU Time:      0.350 seconds;       Data structure size:   0.0Mb
+Wed Nov 26 00:08:57 2025

@@ -1,0 +1,35 @@
+debImport "tb_qp.fsdb"
+wvCreateWindow
+wvSetPosition -win $_nWave2 {("G1" 0)}
+wvOpenFile -win $_nWave2 \
+           {/home/five/rdma-rc-uvm-verification/sim/wave/tb_qp.fsdb}
+srcHierTreeSort -win $_nTrace1 -hierAscending
+srcHierTreeSort -win $_nTrace1 -moduleDescending
+srcHierTreeSort -win $_nTrace1 -moduleAscending
+srcHierTreeSort -win $_nTrace1 -moduleDescending
+srcHierTreeSort -win $_nTrace1 -hierDescending
+nsMsgSwitchTab -tab general
+debImport "/home/five/rdma-rc-uvm-verification/rtl/qp/rdma_rc_qp.v" -path \
+          {/home/five/rdma-rc-uvm-verification/rtl/qp}
+srcHBSelect "rdma_rc_qp" -win $_nTrace1
+srcSetScope -win $_nTrace1 "rdma_rc_qp" -delim "."
+srcHBSelect "rdma_rc_qp" -win $_nTrace1
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "clk" -line 6 -pos 1 -win $_nTrace1
+srcSelect -signal "rst_n" -line 7 -pos 1 -win $_nTrace1
+wvCreateWindow
+wvSetPosition -win $_nWave3 {("G1" 0)}
+wvOpenFile -win $_nWave3 \
+           {/home/five/rdma-rc-uvm-verification/sim/wave/tb_qp.fsdb}
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "clk" -line 6 -pos 1 -win $_nTrace1
+srcAddSelectedToWave -clipboard -win $_nTrace1
+wvDrop -win $_nWave3
+wvUnknownSaveResult -win $_nWave3 -clear
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "rst_n" -line 7 -pos 1 -win $_nTrace1
+srcAddSelectedToWave -clipboard -win $_nTrace1
+wvDrop -win $_nWave3
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "clk" -line 6 -pos 1 -win $_nTrace1
+debExit

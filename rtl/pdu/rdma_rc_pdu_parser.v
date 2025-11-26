@@ -85,7 +85,10 @@ always @(*) begin
         ctrl_frame_r = 1'b0;
     end
 end
-
+// 新增：错误标志的临时锁存寄存器（用于保持1个时钟周期）
+reg opcode_err_t;       // 临时Opcode错误标志
+reg qpn_mismatch_err_t; // 临时QPN不匹配错误标志
+reg pdu_parse_done_t;   // 临时解析完成标志
 // 步骤3：锁存解析结果并检测错误（时序逻辑）
 // 1. 将解析字段和帧类型锁存到输出寄存器
 // 2. 检测Opcode错误：状态不匹配/保留Opcode
@@ -101,57 +104,42 @@ always @(posedge clk or negedge rst_n) begin
         opcode_err       <= 1'b0;
         qpn_mismatch_err <= 1'b0;
         pdu_parse_done   <= 1'b0;
+        opcode_err_t     <= 1'b0;
+        qpn_mismatch_err_t <= 1'b0;
+        pdu_parse_done_t <= 1'b0;
     end else begin
         if (pdu_valid) begin
-            // 锁存解析结果到输出寄存器
+            // 1. 锁存解析结果（原有逻辑）
             pdu_opcode       <= opcode_r;
             pdu_qpn          <= qpn_r;
             pdu_psn          <= psn_r;
             is_data_frame    <= data_frame_r;
             is_control_frame <= ctrl_frame_r;
 
-            // Opcode错误检测：QP状态不匹配 + 保留Opcode
+            // 2. 计算错误标志（原有逻辑，结果存到临时寄存器）
             case (qp_state)
-                RTS: begin
-                    // RTS状态：仅接收数据帧 + 排除保留Opcode
-                    opcode_err <= (~data_frame_r) || (opcode_r >= RESERVED_OPCODE_MIN);
-                end
-                RTR: begin
-                    // RTR状态：仅接收控制帧 + 排除保留Opcode
-                    opcode_err <= (~ctrl_frame_r) || (opcode_r >= RESERVED_OPCODE_MIN);
-                end
-                INIT, RESET: begin
-                    // 初始化/复位状态：所有帧都错误 + 保留Opcode也错误
-                    opcode_err <= 1'b1;
-                end
-                ERROR: begin
-                    opcode_err <= 1'b1;
-                end
-                default: begin
-                    opcode_err <= 1'b1;
-                end
+                RTS:  opcode_err_t <= (~data_frame_r) || (opcode_r >= RESERVED_OPCODE_MIN);
+                RTR:  opcode_err_t <= (~ctrl_frame_r) || (opcode_r >= RESERVED_OPCODE_MIN);
+                default: opcode_err_t <= 1'b1;
             endcase
+            if (opcode_r >= RESERVED_OPCODE_MIN) opcode_err_t <= 1'b1; // 保留Opcode直接错误
+            qpn_mismatch_err_t <= (qpn_r != local_qpn) && (qpn_r != remote_qpn);
+            pdu_parse_done_t   <= 1'b1;
 
-// 移除原独立的保留Opcode判断语句（已整合到case中）
-// if (opcode_r >= RESERVED_OPCODE_MIN) begin
-//     opcode_err <= 1'b1;
-// end  
-
-            // 附加检测：保留Opcode（0x80~0xFF）直接判定为错误
-            if (opcode_r >= RESERVED_OPCODE_MIN) begin
-                opcode_err <= 1'b1;
-            end
-
-            // QPN不匹配错误检测：解析值与本地/远程QPN均不相等
-            qpn_mismatch_err <= (qpn_r != local_qpn) && (qpn_r != remote_qpn);
-
-            // 置位解析完成标志
-            pdu_parse_done <= 1'b1;
-        end else begin
-            // PDU无效时：清空错误标志和解析完成标志，保留解析结果
+            // 3. 输出寄存器先清空（等待下一个周期更新）
             opcode_err       <= 1'b0;
             qpn_mismatch_err <= 1'b0;
             pdu_parse_done   <= 1'b0;
+        end else begin
+            // 核心：pdu_valid无效后，将临时错误标志赋值给输出，保持1个周期（匹配时序图）
+            opcode_err       <= opcode_err_t;
+            qpn_mismatch_err <= qpn_mismatch_err_t;
+            pdu_parse_done   <= pdu_parse_done_t;
+
+            // 1个周期后清空临时寄存器，准备下一次PDU
+            opcode_err_t     <= 1'b0;
+            qpn_mismatch_err_t <= 1'b0;
+            pdu_parse_done_t <= 1'b0;
         end
     end
 end

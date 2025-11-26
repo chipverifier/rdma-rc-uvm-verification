@@ -1,0 +1,56 @@
+@verdi rc file Version 1.0
+[General]
+saveDB = TRUE
+relativePath = FALSE
+saveSingleView = FALSE
+saveNWaveWinId = 
+VerdiVersion = Verdi_O-2018.09-SP2
+[KeyNote]
+Line1 = Automatic Backup 0
+Line2 = Save Open Database Information: Yes
+Line3 = Path Option: Absolute Paths
+Line4 = Windows Option: All Windows
+[TestBench]
+ConstrViewShow = 0
+InherViewShow = 0
+FSDBMsgShow = 0
+AnnotationShow = 0
+Console = FALSE
+powerDumped = 0
+[hb]
+viewport = 0 27 1024 665 0 0 169 1022
+activeNode = "std.randomize"
+activeScope = "std.randomize"
+activeFile = "/home/five/synopsys_install/verdi/Verdi_O-2018.09-SP2/etc/kdb/verilog/buildinClass/novas_std.sv"
+interactiveMode = False
+viewType = Source
+simulatorMode = False
+sourceBeginLine = 25
+baMode = False
+srcLineNum = True
+AutoWrap = True
+IdentifyFalseLogic = False
+syncSignal = False
+traceMode = Hierarchical
+showTraceInSchema = True
+paMode = False
+funcMode = False
+powerAwareAnnot = True
+amsAnnot = True
+traceCrossHier = True
+DnDtraceCrossHierOnly = True
+traceIncTopPort = False
+leadingZero = False
+signalPane = False
+Scope1 = "std.randomize"
+Scope2 = "UPF"
+multipleSelection = 1 25 6 0 0
+sdfCheckUndef = FALSE
+simFlow = FALSE
+[hb.design]
+importCmd = "-sv" "../verification/tb_rdma_rc_qp.sv" "../rtl/qp/rdma_rc_qp.v" "-l" "verdi.log" 
+invokeDir = /home/five/rdma-rc-uvm-verification/sim/wave
+[hb.sourceTab.1]
+scope = std.randomize
+File = /home/five/synopsys_install/verdi/Verdi_O-2018.09-SP2/etc/kdb/verilog/buildinClass/novas_std.sv
+Line = 26

@@ -1,0 +1,2 @@
+../verification/tb_rdma_rc_qp.sv
+../rtl/qp/rdma_rc_qp.v

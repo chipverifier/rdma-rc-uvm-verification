@@ -1,0 +1,7 @@
+debImport "-sv" "../verification/tb_rdma_rc_qp.sv" "../rtl/qp/rdma_rc_qp.v" "-l" \
+          "verdi.log"
+srcHBSelect "tb_rdma_rc_qp.u_rdma_rc_qp" -win $_nTrace1
+srcSetScope -win $_nTrace1 "tb_rdma_rc_qp.u_rdma_rc_qp" -delim "."
+srcHBSelect "tb_rdma_rc_qp.u_rdma_rc_qp" -win $_nTrace1
+wvCreateWindow
+debExit
