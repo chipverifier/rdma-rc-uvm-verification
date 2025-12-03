@@ -1,0 +1,1 @@
+verdi -sv ../verification/tb_rdma_rc_buf.sv ../rtl/buf/rdma_rc_buf.v -ssf tb_rdma_rc_buf.fsdb &
