@@ -51,6 +51,18 @@ class rdma_monitor extends uvm_monitor;
         end
     endtask
 
+    // ======================
+    // 核心改动：在Monitor的build_phase中直接获取接口
+    // ======================
+    function void build_phase(uvm_phase phase);
+        super.build_phase(phase);
+        // 与Driver一致：获取TB中存储的"rdma_vif"接口
+        if (!uvm_config_db#(virtual rdma_if)::get(this, "", "rdma_vif", vif)) begin
+            $fatal(1, "[MONITOR] Failed to get 'rdma_vif' from uvm_config_db!");
+        end
+        $display("[MONITOR] Successfully got 'rdma_vif' from uvm_config_db");
+    endfunction
+
     // 保留：核心方法——获取队列中的RX数据（原有逻辑，不变）
     function pkt_beat_t get_rx_beat();
         if (rx_queue.size() == 0) begin

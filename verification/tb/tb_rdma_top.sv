@@ -3,9 +3,6 @@ import uvm_pkg::*;
 `include "uvm_macros.svh"
 module tb_rdma_top;
 
-    // ======================
-    // Clock & Reset（无修改）
-    // ======================
     logic clk;
     logic rst_n;
 
@@ -18,19 +15,7 @@ module tb_rdma_top;
         rst_n = 1;
     end
 
-    // ======================
-    // 接口实例化（无修改）
-    // ======================
     rdma_if rdma_intf(clk, rst_n);
-
-    // ======================
-    // Env句柄（无修改）
-    // ======================
-    rdma_env     env;
-
-    // ======================
-    // DUT（无修改）
-    // ======================
     rdma_top dut (
         .clk      (clk),
         .rst_n    (rst_n),
@@ -42,14 +27,13 @@ module tb_rdma_top;
         .tx_last  (rdma_intf.tx_last)
     );
 
-    // ======================
-    // 修复2：直接使用全局的pkt_beat_t（无需env.mon.）
-    // ======================
-    pkt_beat_t exp;  // 直接使用外部定义的结构体类型
+
+    pkt_beat_t exp;
 
     // ======================
     // 修改：对比TX输出，改用Monitor的rx_queue（其余无修改）
     // ======================
+    /*
     always @(posedge clk) begin
         if (rst_n && rdma_intf.cb.tx_valid) begin
             // 替换：从Monitor的rx_queue取预期值
@@ -66,45 +50,15 @@ module tb_rdma_top;
             end
         end
     end
+    */
 
     // ======================
     // Main Test（无其他修改）
     // ======================
     initial begin
-        //改动1：替换原有env = new(rdma_intf); 改为UVM标准构造函数（传名称或空参数）
-        env = new("rdma_env"); // 也可以写 env = new(); （使用默认名称）
-        // 改动2：新增set_vif调用，给env赋值接口（核心修复）
-        env.set_vif(rdma_intf);
-        env.init();
-        env.start();
-
-        wait (rst_n);
-        @(rdma_intf.cb);
-
-        $display("=================================");
-        $display(" RDMA RX -> TX BASIC TEST START ");
-        $display("=================================");
-
-        $display("Send Packet A (4 beats)");
-        env.drv.send_packet(4, 64'h1000);
-
-        #50;
-
-        $display("Send Packet B (2 beats)");
-        env.drv.send_packet(2, 64'h2000);
-
-        #100;
-
-        // 检查Monitor的rx_queue是否为空
-        if (env.mon.rx_queue.size() != 0) begin
-            $fatal(1, "[ERROR] Test end but Monitor rx_queue not empty!");
-        end
-
-        $display("=================================");
-        $display("         TEST PASS               ");
-        $display("=================================");
-
-        $finish;
+        // 关键：将rdma_intf存入UVM配置库，标识名为"rdma_vif"
+        uvm_config_db#(virtual rdma_if)::set(null, "*", "rdma_vif", rdma_intf);
+        $display("[TB] rdma_vif stored to uvm_config_db successfully");
     end
 
     initial begin

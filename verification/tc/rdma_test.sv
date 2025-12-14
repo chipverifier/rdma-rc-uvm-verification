@@ -4,15 +4,17 @@
 class rdma_test extends uvm_test;
     // UVM组件注册宏（必须）
     `uvm_component_utils(rdma_test)
-
+    rdma_env env; // Env句柄
     // 标准UVM构造函数
     function new(string name = "rdma_test", uvm_component parent = null);
         super.new(name, parent);
     endfunction
 
-    // 空的build_phase（UVM生命周期方法，可留空）
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
+        // 创建Env（纳入UVM层次，其phase会自动执行）
+        env = rdma_env::type_id::create("env", this);
+        $display("[TEST] rdma_env created in build_phase");
     endfunction
 
     // 新增：添加run_phase，使用objection阻止UVM立刻结束，添加延迟
