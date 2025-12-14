@@ -1,3 +1,0 @@
-Command Line: /home/five/synopsys_install/verdi/Verdi_O-2018.09-SP2/platform/LINUXAMD64/bin/vfast -silent -del . -o /home/five/rdma-rc-uvm-verification/sim/wave/tb_qp.vcd.fsdb -ft verilog /home/five/rdma-rc-uvm-verification/sim/wave/tb_qp.vcd
-uname(Linux eda1 3.10.0-1160.119.1.el7.x86_64 #1 SMP Tue Jun 4 14:43:51 UTC 2024 x86_64)
-au time 0.007275 0.001369 0.003441 delta 16588800 16588800 total 101462016 101462016

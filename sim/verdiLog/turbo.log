@@ -1,2 +1,0 @@
-Command Line: /home/five/synopsys_install/verdi/Verdi_O-2018.09-SP2/platform/LINUXAMD64/bin/Novas -sv ../verification/tb_rdma_rc_qp.sv ../rtl/qp/rdma_rc_qp.v -ss wave/tb_qp.fsdb -l verdi.log
-uname(Linux eda1 3.10.0-1160.119.1.el7.x86_64 #1 SMP Tue Jun 4 14:43:51 UTC 2024 x86_64)
