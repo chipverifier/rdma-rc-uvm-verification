@@ -1,7 +1,5 @@
 // verification/tb/rdma_if.sv
-//`timescale 1ns/1ps
 
-// 仅定义必要的信号和时钟块，满足接口连接需求
 interface rdma_if (
     input logic clk,
     input logic rst_n
@@ -22,5 +20,4 @@ interface rdma_if (
         output rx_valid, rx_data, rx_last;
         input tx_valid, tx_data, tx_last;
     endclocking
-
 endinterface

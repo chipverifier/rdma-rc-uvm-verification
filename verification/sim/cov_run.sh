@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 mkdir -p log wave cov
-
 vcs \
 -sverilog \
 -full64 \
@@ -12,11 +11,13 @@ vcs \
 $UVM_HOME/src/uvm_pkg.sv \
 $UVM_HOME/src/dpi/uvm_dpi.cc \
 -debug_access+all \
-+cover=stmt +cover=branch +cover=cond \
-+fsdbfile=wave/rdma.fsdb \
++fsdb \
 -f ../cfg/filelist_basic.f \
 -l log/compile.log \
 -P $VERDI_HOME/share/PLI/VCS/LINUX64/novas.tab \
 $VERDI_HOME/share/PLI/VCS/LINUX64/pli.a
-
-./simv +cover=all -l log/sim.log
+./simv \
++cover=stmt+branch+cond \
++UVM_NO_RELNOTES \
+-l log/sim.log
+grep -E "Coverage|stmt|branch|cond" log/sim.log

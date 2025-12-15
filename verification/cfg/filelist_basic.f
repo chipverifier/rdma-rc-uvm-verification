@@ -8,12 +8,17 @@
 //common
 ../common/common_pkg.sv
 
+//trans
+../../verification/trans/rdma_txn.sv
+
 //env
 ../../verification/env/rdma_seq_item.sv
 ../../verification/env/rdma_sequencer.sv
 ../../verification/env/rdma_sequence.sv
 ../../verification/env/rdma_monitor.sv
 ../../verification/env/rdma_driver.sv
+../../verification/env/rdma_rm.sv
+../../verification/env/rdma_scb.sv
 ../../verification/env/rdma_env.sv
 //tc
 ../../verification/tc/rdma_test.sv
