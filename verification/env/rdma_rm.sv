@@ -1,3 +1,5 @@
+import "DPI-C" context function void dpi_write(input int beats);
+
 class rdma_rm extends uvm_component;
     `uvm_component_utils(rdma_rm)
 
@@ -16,5 +18,6 @@ class rdma_rm extends uvm_component;
         exp.beats  = rx.beats;
         exp.data_q = rx.data_q;
         exp_tx_ap.write(exp);
+        dpi_write(rx.beats);
     endfunction
 endclass
