@@ -19,7 +19,10 @@ class rdma_test extends uvm_test;
         rdma_fixed_seq seq;
         phase.raise_objection(this);
         seq = rdma_fixed_seq::type_id::create("seq");
-        seq.start(env.sqr);
+        wait(env.agt.vif.rst_n);
+        #100;
+        seq.start(env.agt.sqr);
+        #1000;
         phase.drop_objection(this);
     endtask
     

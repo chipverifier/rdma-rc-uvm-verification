@@ -10,6 +10,12 @@ class rdma_driver extends uvm_driver#(rdma_seq_item);
         super.new(name, parent);
     endfunction
 
+    function void build_phase(uvm_phase phase);
+        super.build_phase(phase);
+        if (!uvm_config_db#(virtual rdma_if)::get(this, "", "rdma_vif", vif))
+            `uvm_fatal("DRV", "vif not set")
+    endfunction
+
     task run_phase(uvm_phase phase);
         rdma_seq_item req;
 
