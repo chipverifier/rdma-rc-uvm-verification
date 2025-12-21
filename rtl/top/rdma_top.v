@@ -53,11 +53,11 @@ module rdma_top (
     assign host2qp_valid = host_valid;
     assign host2qp_data  = host_data;
     assign host2qp_last  = host_last;
-
+/*
     assign host2qp_valid = 1'b0;
     assign host2qp_data  = 64'd0;
     assign host2qp_last  = 1'b0;
-
+*/
 
     assign arb_valid = host2qp_valid | rx2qp_valid;
     assign arb_data  = host2qp_valid ? host2qp_data : rx2qp_data;

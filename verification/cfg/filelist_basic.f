@@ -11,6 +11,7 @@
 
 //trans
 ../../verification/trans/rdma_txn.sv
+../../verification/tb/rdma_if.sv
 
 //env
 ../../verification/env/rdma_seq_item.sv
@@ -18,13 +19,25 @@
 ../../verification/env/rdma_sequence.sv
 ../../verification/env/rdma_monitor.sv
 ../../verification/env/rdma_driver.sv
+../../verification/env/rdma_agent.sv
+//host
+../../verification/env/rdma_host_seq_item.sv
+../../verification/env/rdma_host_sequencer.sv
+../../verification/env/rdma_host_sequence.sv
+//../../verification/env/rdma_host_monitor.sv
+../../verification/env/rdma_host_driver.sv
+../../verification/env/rdma_host_agent.sv
+//complete
+../../verification/env/rdma_complete_seq_item.sv
+../../verification/env/rdma_complete_monitor.sv
+../../verification/env/rdma_complete_agent.sv
+
 ../../verification/env/rdma_rm.sv
 ../../verification/env/rdma_rm_dpi.cpp
 ../../verification/env/rdma_scb.sv
-../../verification/env/rdma_agent.sv
+
 ../../verification/env/rdma_env.sv
 //tc
 ../../verification/tc/rdma_test.sv
 //tb
 ../../verification/tb/tb_rdma_top.sv
-../../verification/tb/rdma_if.sv
