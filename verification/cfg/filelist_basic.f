@@ -1,4 +1,5 @@
 // RTL
+../../rtl/parser/cmd_parser.v
 ../../rtl/rx/rdma_rx.v
 ../../rtl/qp/qp_context.v
 ../../rtl/sched/rdma_sched.v

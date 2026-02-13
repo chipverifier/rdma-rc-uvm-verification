@@ -39,6 +39,16 @@ module rdma_top (
 
     wire        tx_done;
 
+    // host接口
+    wire         cmd_valid;
+    wire [255:0] cmd_data;
+
+    // parser输出
+    wire [7:0]   opcode;
+    wire [55:0]  addr;
+    wire [127:0] data;
+    wire         cmd_done;
+
     rdma_rx u_rx (
         .clk          (clk),
         .rst_n        (rst_n),
@@ -88,9 +98,9 @@ module rdma_top (
     rdma_tx u_tx (
         .clk         (clk),
         .rst_n       (rst_n),
-        .tx_in_valid (sch2tx_valid),
-        .tx_in_data  (sch2tx_data),
-        .tx_in_last  (sch2tx_last),
+        .tx_in_valid (cmd_done),
+        .tx_in_data  ({opcode, addr, data[63:0]}),
+        .tx_in_last  (1),
         .tx_valid    (tx_valid),
         .tx_data     (tx_data),
         .tx_last     (tx_last),
@@ -103,5 +113,20 @@ module rdma_top (
         .tx_done    (tx_done),
         .comp_valid (comp_valid)
     );
+
+    cmd_parser u_cmd_parser (
+        .clk       (clk),
+        .rst_n     (rst_n),
+
+        .cmd_valid (cmd_valid),
+        .cmd_data  (cmd_data),
+        .cmd_ready (),
+
+        .opcode    (opcode),
+        .addr      (addr),
+        .data      (data),
+        .cmd_done  (cmd_done)
+    );
+
 
 endmodule
